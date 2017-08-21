@@ -1,0 +1,24 @@
+version: '2.1'
+
+services:
+  web:
+    build: .
+    image: nphung/humhub
+    ports:
+      - "8080:2015"
+    links:
+      - "db:mysql"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:5
+    environment:
+      - MYSQL_USER=humhub
+      - MYSQL_PASSWORD=humhub
+      - MYSQL_DATABASE=humhub
+    volumes:
+      - ./data:/var/lib/mysql
+    healthcheck:
+      test: 'mysql -uroot -phumhub -e "select 1"; [ "0" -eq "$$?" ]; echo $$?'
